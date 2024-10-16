@@ -1,3 +1,5 @@
+# Cookie Clicker Game
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,64 +7,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cookie Clicker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
-        }
-        #cookie {
-            width: 200px;
-            height: 200px;
-            background-image: url('cookie.png');
-            background-size: cover;
-            margin: 20px auto;
-            cursor: pointer;
-        }
-        #upgrades {
-            margin-top: 20px;
-        }
-        .upgrade {
-            margin: 10px;
-            padding: 10px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            display: inline-block;
-            cursor: pointer;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #cookie { width: 200px; cursor: pointer; }
+        #upgrades { margin-top: 20px; }
+        .upgrade { margin: 10px; }
     </style>
 </head>
 <body>
-
     <h1>Cookie Clicker</h1>
-    <div id="cookie" onclick="addCookie()"></div>
+    <img id="cookie" src="cookie.png" alt="Cookie">
     <h2 id="cookieCount">Cookies: 0</h2>
-
-    <div id="upgrades">
-        <div class="upgrade" onclick="buyUpgrade('double')">Double Cookies (Cost: 50)</div>
-        <div class="upgrade" onclick="buyUpgrade('auto')">Auto Clicker (Cost: 100)</div>
-    </div>
+    <div id="upgrades"></div>
+    <button id="save">Save Game</button>
+    <button id="load">Load Game</button>
 
     <script>
         let cookieCount = 0;
-        let cookieMultiplier = 1;
+        let upgrades = [];
+        const cookieElement = document.getElementById('cookieCount');
+        const upgradesElement = document.getElementById('upgrades');
 
-        function addCookie() {
-            cookieCount += cookieMultiplier;
-            document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
+        document.getElementById('cookie').onclick = function() {
+            cookieCount++;
+            cookieElement.innerText = `Cookies: ${cookieCount}`;
+        };
+
+        function addUpgrade(name, cost, effect) {
+            const upgrade = { name, cost, effect };
+            upgrades.push(upgrade);
+            renderUpgrades();
         }
 
-        function buyUpgrade(type) {
-            if (type === 'double' && cookieCount >= 50) {
-                cookieMultiplier *= 2;
-                cookieCount -= 50;
-                document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
-            } else if (type === 'auto' && cookieCount >= 100) {
-                setInterval(addCookie, 1000);
-                cookieCount -= 100;
-                document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
-            }
+        function renderUpgrades() {
+            upgradesElement.innerHTML = '';
+            upgrades.forEach((upgrade, index) => {
+                const button = document.createElement('button');
+                button.innerText = `${upgrade.name} - Cost: ${upgrade.cost}`;
+                button.className = 'upgrade';
+                button.onclick = function() {
+                    if (cookieCount >= upgrade.cost) {
+                        cookieCount -= upgrade.cost;
+                        cookieElement.innerText = `Cookies: ${cookieCount}`;
+                        upgrade.effect();
+                    }
+                };
+                upgradesElement.appendChild(button);
+            });
         }
+
+        document.getElementById('save').onclick = function() {
+            localStorage.setItem('cookieCount', cookieCount);
+            localStorage.setItem('upgrades', JSON.stringify(upgrades));
+        };
+
+        document.getElementById('load').onclick = function() {
+            cookieCount = parseInt(localStorage.getItem('cookieCount')) || 0;
+            upgrades = JSON.parse(localStorage.getItem('upgrades')) || [];
+            cookieElement.innerText = `Cookies: ${cookieCount}`;
+            renderUpgrades();
+        };
+
+        // Example upgrades
+        addUpgrade('Double Click', 10, () => {
+            const originalClick = cookieCount;
+            cookieCount += 2;
+            cookieElement.innerText = `Cookies: ${cookieCount}`;
+        });
+
+        addUpgrade('Cookie Multiplier', 50, () => {
+            cookieCount += 10;
+            cookieElement.innerText = `Cookies: ${cookieCount}`;
+        });
     </script>
-
 </body>
 </html>
