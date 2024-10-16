@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Clicker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        #cookie {
+            width: 200px;
+            height: 200px;
+            background-image: url('cookie.png');
+            background-size: cover;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+        #upgrades {
+            margin-top: 20px;
+        }
+        .upgrade {
+            margin: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            display: inline-block;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cookie Clicker</h1>
+    <div id="cookie" onclick="addCookie()"></div>
+    <h2 id="cookieCount">Cookies: 0</h2>
+
+    <div id="upgrades">
+        <div class="upgrade" onclick="buyUpgrade('double')">Double Cookies (Cost: 50)</div>
+        <div class="upgrade" onclick="buyUpgrade('auto')">Auto Clicker (Cost: 100)</div>
+    </div>
+
+    <script>
+        let cookieCount = 0;
+        let cookieMultiplier = 1;
+
+        function addCookie() {
+            cookieCount += cookieMultiplier;
+            document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
+        }
+
+        function buyUpgrade(type) {
+            if (type === 'double' && cookieCount >= 50) {
+                cookieMultiplier *= 2;
+                cookieCount -= 50;
+                document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
+            } else if (type === 'auto' && cookieCount >= 100) {
+                setInterval(addCookie, 1000);
+                cookieCount -= 100;
+                document.getElementById('cookieCount').innerText = 'Cookies: ' + cookieCount;
+            }
+        }
+    </script>
+
+</body>
+</html>
